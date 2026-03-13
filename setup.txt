@@ -1,0 +1,30 @@
+-- En PostgreSQL
+CREATE EXTENSION IF NOT EXISTS vector;
+
+CREATE TABLE documents (
+    id        SERIAL PRIMARY KEY,
+    doc_name  TEXT,
+    section   TEXT,
+    content   TEXT,
+    embedding VECTOR(768)       -- 768 para nomic-embed-text
+);
+
+-- Índice HNSW para búsquedas rápidas (~50ms incluso con miles de docs)
+CREATE INDEX ON documents
+USING hnsw (embedding vector_cosine_ops)
+WITH (m = 16, ef_construction = 64);
+```
+
+---
+
+## Resumen del flujo completo
+```
+# 1. Procesar cada PDF (una sola vez)
+python ingest.py expediente_001.pdf
+python ingest.py expediente_002.pdf
+
+# 2. Open WebUI consulta automáticamente pgvector
+#    vía la Function instalada — el usuario no ve nada distinto
+
+# 3. Resultado: el modelo solo recibe los 6 chunks relevantes,
+#    no las 300+ páginas completas

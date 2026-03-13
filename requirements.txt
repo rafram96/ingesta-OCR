@@ -1,0 +1,14 @@
+# Environment Configuration
+python-dotenv
+
+# OCR and Document Processing
+paddlepaddle-gpu
+paddleocr
+docling
+
+# Database
+psycopg2-binary
+
+# LLM and NLP
+ollama
+langchain-text-splitters
